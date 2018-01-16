@@ -207,7 +207,7 @@ macro_rules! route_id {
             ///
             #[doc = "# Errors"]
             /// If `access_token` is not set.
-            pub fn $name(&self, id: u64) -> Result<$ret> {
+            pub fn $name(&self, id: String) -> Result<$ret> {
                 self.$method(self.route(&format!(concat!("/api/v1/", $url), id)))
             }
          )*
@@ -357,18 +357,19 @@ impl Mastodon {
         (get) notifications: "notifications" => Vec<Notification>,
         (get) reports: "reports" => Vec<Report>,
         (get) get_home_timeline: "timelines/home" => Vec<Status>,
-        (post (id: u64,)) allow_follow_request: "accounts/follow_requests/authorize" => Empty,
-        (post (id: u64,)) reject_follow_request: "accounts/follow_requests/reject" => Empty,
+        (post (id: String,)) allow_follow_request: "accounts/follow_requests/authorize" => Empty,
+        (post (id: String,)) reject_follow_request: "accounts/follow_requests/reject" => Empty,
         (post (uri: Cow<'static, str>,)) follows: "follows" => Account,
         (post) clear_notifications: "notifications/clear" => Empty,
         (post multipart (file: Cow<'static, str>,)) media: "media" => Attachment,
-        (post (account_id: u64, status_ids: Vec<u64>, comment: String,)) report:
+        (post (account_id: String, status_ids: Vec<String>, comment: String,)) report:
             "reports" => Report,
         (post (q: String, resolve: bool,)) search: "search" => SearchResult,
     }
 
     route_id! {
         (get) get_account: "accounts/{}" => Account,
+        (get) get_home_timeline_max: "timelines/home?max_id={}" => Vec<Status>,
         (get) followers: "accounts/{}/followers" => Vec<Account>,
         (get) following: "accounts/{}/following" => Vec<Account>,
         (get) follow: "accounts/{}/follow" => Account,
